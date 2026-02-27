@@ -1,6 +1,7 @@
-# ORM models are defined in Phase 2.
-# Import them here so Alembic's env.py picks up metadata automatically.
-#
-# from app.models.job import Job           # Phase 2
-# from app.models.time_series import TimeSeries  # Phase 2
-# from app.models.forecast import Forecast  # Phase 2
+# Import all ORM models here so Alembic's env.py picks up their metadata automatically.
+from app.models.forecast import Forecast
+from app.models.job import Job, JobStatus
+from app.models.time_series import TimeSeries
+from app.models.weather import PublicHoliday, WeatherObservation
+
+__all__ = ["Job", "JobStatus", "TimeSeries", "Forecast", "WeatherObservation", "PublicHoliday"]
