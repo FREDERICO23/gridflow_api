@@ -31,6 +31,11 @@ def _detect_column(columns: list[str], hints: tuple[str, ...]) -> str | None:
 
 def _parse_csv(data: bytes) -> pd.DataFrame:
     """Try semicolon separator first (German locale), then comma."""
+    import pandas.errors as pd_errors
+
+    if not data or not data.strip():
+        raise ValueError("File is empty")
+
     for sep in (";", ","):
         try:
             df = pd.read_csv(
@@ -42,10 +47,16 @@ def _parse_csv(data: bytes) -> pd.DataFrame:
             )
             if len(df.columns) >= 2:
                 return df
+        except pd_errors.EmptyDataError:
+            raise ValueError("File is empty")
         except Exception:
             continue
+
     # Last resort: let pandas sniff
-    return pd.read_csv(io.BytesIO(data), encoding="utf-8-sig")
+    try:
+        return pd.read_csv(io.BytesIO(data), encoding="utf-8-sig")
+    except pd_errors.EmptyDataError:
+        raise ValueError("File is empty")
 
 
 def _parse_excel(data: bytes) -> pd.DataFrame:
