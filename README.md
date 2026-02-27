@@ -9,6 +9,7 @@ Energy Load Platform — ingests raw energy consumption files and produces an 8,
 - [Architecture](#architecture)
 - [Prerequisites](#prerequisites)
 - [Local Development](#local-development)
+- [Running the API](#running-the-api)
 - [Frontend](#frontend)
 - [Running Tests](#running-tests)
 - [API Reference](#api-reference)
@@ -142,6 +143,43 @@ docker compose down
 
 # Stop and wipe the database volume
 docker compose down -v
+```
+
+---
+
+## Running the API
+
+### With Docker Compose (recommended)
+
+```bash
+# Start all services (API, Celery worker, TimescaleDB, Redis)
+docker compose up --build
+
+# Run in the background
+docker compose up -d --build
+
+# Apply database migrations (run once after first start)
+docker compose exec api alembic upgrade head
+
+# Stop all services
+docker compose down
+```
+
+The API is available at <http://localhost:8000>.
+
+### API only (no worker / DB)
+
+If you already have PostgreSQL and Redis running externally, you can start just the FastAPI server:
+
+```bash
+# Set connection variables in your environment or .env
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+### Celery worker only
+
+```bash
+celery -A app.workers.celery_app worker --loglevel=info --concurrency=4
 ```
 
 ---
