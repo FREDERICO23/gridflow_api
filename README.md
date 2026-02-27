@@ -4,7 +4,7 @@ Energy Load Platform — ingests raw energy consumption files and produces an 8,
 
 ---
 
-## Table of Contents
+## Table of Content
 
 - [Architecture](#architecture)
 - [Prerequisites](#prerequisites)
