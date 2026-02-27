@@ -188,6 +188,17 @@ celery -A app.workers.celery_app worker --loglevel=info --concurrency=4
 
 The frontend is a React + TypeScript + Vite app located in the [`frontend/`](frontend/) directory.
 
+### API key in the navbar
+
+When you open the app, the header has an **API key** field. Enter the same value you set as `API_KEY` in your `.env` file:
+
+```dotenv
+# .env (project root)
+API_KEY=dev-api-key   ← type this exact value into the navbar field
+```
+
+The default out-of-the-box value is `dev-api-key`. The key is saved in `localStorage` so you only need to enter it once per browser. The frontend sends it as an `X-API-Key` header on every request to the API.
+
 ### Install dependencies
 
 ```bash
