@@ -47,6 +47,5 @@ async def get_status(
             "default_country_code": settings.default_country_code,
             "forecast_confidence_interval": settings.forecast_confidence_interval,
             "weather_enrichment_enabled": settings.weather_enrichment_enabled,
-            "max_upload_size_mb": settings.max_upload_size_bytes // (1024 * 1024),
         },
     }

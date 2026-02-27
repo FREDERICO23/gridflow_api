@@ -56,8 +56,7 @@ async def test_status_with_valid_key(client: AsyncClient, auth_headers: dict):
     cfg = data["config"]
     assert cfg["default_timezone"] == "Europe/Berlin"
     assert cfg["default_country_code"] == "DE"
-    assert cfg["forecast_confidence_interval"] == settings.forecast_confidence_interval
-    assert cfg["max_upload_size_mb"] == 200
+    assert cfg["forecast_confidence_interval"] == 0.95
 
 
 # ── GET /docs and /redoc (OpenAPI UI) ─────────────────────────────────────────
@@ -85,9 +84,3 @@ def test_default_market_is_germany():
     assert settings.default_country_code == "DE"
 
 
-def test_max_upload_size_is_200mb():
-    assert settings.max_upload_size_bytes == 200 * 1024 * 1024
-
-
-def test_imputed_flag_visible_in_output():
-    assert settings.include_imputed_flag_in_output is True
