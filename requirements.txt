@@ -19,5 +19,12 @@ redis>=5.0.3
 # Google Cloud Storage
 google-cloud-storage>=2.16.0
 
-# HTTP client (used for external API calls in later phases)
+# HTTP client (external APIs: Open-Meteo, Nager.Date)
 httpx>=0.27.0
+
+# Data processing & forecasting
+pandas>=2.0.0
+numpy>=1.26.0
+prophet>=1.1.5
+openpyxl>=3.1.0
+pytz>=2024.1
