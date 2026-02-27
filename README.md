@@ -54,7 +54,7 @@ redis    → Redis 7 on :6379
 ### 1. Clone and configure
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/FREDERICO23/gridflow_api.git
 cd gridflow_api
 
 cp .env.example .env
