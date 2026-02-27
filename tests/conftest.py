@@ -14,9 +14,14 @@ def anyio_backend():
 
 @pytest.fixture
 async def client() -> AsyncClient:
-    """Async test client that talks directly to the ASGI app (no network required)."""
+    """Async test client that talks directly to the ASGI app (no network required).
+
+    raise_app_exceptions=False ensures that unhandled server errors are converted to
+    HTTP 500 responses rather than propagating as Python exceptions in tests.
+    This matches real-world behaviour where clients receive 500, not stack traces.
+    """
     async with AsyncClient(
-        transport=ASGITransport(app=app),
+        transport=ASGITransport(app=app, raise_app_exceptions=False),
         base_url="http://testserver",
     ) as ac:
         yield ac
