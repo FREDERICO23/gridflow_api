@@ -9,6 +9,7 @@ Energy Load Platform — ingests raw energy consumption files and produces an 8,
 - [Architecture](#architecture)
 - [Prerequisites](#prerequisites)
 - [Local Development](#local-development)
+- [Frontend](#frontend)
 - [Running Tests](#running-tests)
 - [API Reference](#api-reference)
 - [Environment Variables](#environment-variables)
@@ -141,6 +142,40 @@ docker compose down
 
 # Stop and wipe the database volume
 docker compose down -v
+```
+
+---
+
+## Frontend
+
+The frontend is a React + TypeScript + Vite app located in the [`frontend/`](frontend/) directory.
+
+### Install dependencies
+
+```bash
+cd frontend
+npm install
+```
+
+### Run the dev server
+
+```bash
+npm run dev
+```
+
+Vite starts on <http://localhost:5173> with hot module replacement.
+
+### Other commands
+
+```bash
+# Type-check and build for production
+npm run build
+
+# Preview the production build locally
+npm run preview
+
+# Lint
+npm run lint
 ```
 
 ---
