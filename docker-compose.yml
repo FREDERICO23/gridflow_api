@@ -63,5 +63,16 @@ services:
       redis:
         condition: service_healthy
 
+  # ─── Frontend (React + nginx) ────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+
 volumes:
   postgres_data:

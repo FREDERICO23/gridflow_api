@@ -15,6 +15,7 @@ Energy Load Platform — ingests raw energy consumption files and produces an 8,
 - [API Reference](#api-reference)
 - [Environment Variables](#environment-variables)
 - [Deployment](#deployment)
+- [Deploying with Coolify](#deploying-with-coolify)
 
 ---
 
@@ -411,3 +412,82 @@ No authentication required for this endpoint.
 | --- | --- |
 | GCP (Cloud Run, GCE, GKE) | Application Default Credentials (leave `GCS_CREDENTIALS_PATH` unset) |
 | Outside GCP | Mount service account JSON and set `GCS_CREDENTIALS_PATH` |
+
+---
+
+## Deploying with Coolify
+
+[Coolify](https://coolify.io) is a self-hosted platform that can deploy the full stack directly from your Git repository using the existing `docker-compose.yml`.
+
+### What gets deployed
+
+| Service | Container | Exposed port |
+| --- | --- | --- |
+| FastAPI | `api` | 8000 (internal) |
+| Celery worker | `worker` | — |
+| TimescaleDB | `db` | 5432 (internal) |
+| Redis | `redis` | 6379 (internal) |
+| React frontend | `frontend` | 80 (mapped to 3000) |
+
+The nginx container inside `frontend` serves the built React app **and** proxies `/api/` and `/health` to the `api` container, so you only need to expose one public URL.
+
+### Steps
+
+#### 1. Push your code to a Git repository
+
+Push to GitHub, GitLab, or any Git host Coolify is connected to.
+
+#### 2. In Coolify, create a new resource
+
+- Click **New Resource → Docker Compose**
+- Connect your repository and select the branch to deploy
+
+#### 3. Set environment variables
+
+In the Coolify dashboard under **Environment Variables**, add all values from your `.env` file. At minimum:
+
+```dotenv
+API_KEY=<strong-random-key>
+DATABASE_URL=postgresql+asyncpg://gridflow:gridflow@db:5432/gridflow
+REDIS_URL=redis://redis:6379/0
+GCS_BUCKET_RAW=gridflow-raw-uploads
+GCS_BUCKET_OUTPUT=gridflow-forecast-outputs
+DEFAULT_TIMEZONE=Europe/Berlin
+DEFAULT_COUNTRY_CODE=DE
+WEATHER_ENRICHMENT_ENABLED=true
+DEBUG=false
+```
+
+Generate a strong API key:
+
+```bash
+python -c "import secrets; print(secrets.token_hex(32))"
+```
+
+#### 4. Set the public port
+
+In Coolify, set the **public port** for the `frontend` service to `80`. Coolify will assign a domain and handle HTTPS automatically.
+
+#### 5. Deploy
+
+Click **Deploy**. Coolify builds all images and starts the stack.
+
+#### 6. Run database migrations
+
+After the first deploy, open the **Terminal** for the `api` container in Coolify and run:
+
+```bash
+alembic upgrade head
+```
+
+#### 7. Open the app
+
+Navigate to the domain Coolify assigned. Enter your `API_KEY` value in the navbar and start uploading load profiles.
+
+### GCS credentials (optional)
+
+If you use Google Cloud Storage, add your service account JSON as a file secret in Coolify mounted at `/app/credentials/gcs-service-account.json`, then set:
+
+```dotenv
+GCS_CREDENTIALS_PATH=/app/credentials/gcs-service-account.json
+```
