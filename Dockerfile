@@ -17,6 +17,8 @@ COPY . .
 
 EXPOSE 8000
 
-# Default: run the API server.
+RUN chmod +x start.sh
+
+# Default: run migrations then start the API server.
 # Override CMD in docker-compose for the worker service.
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["./start.sh"]
