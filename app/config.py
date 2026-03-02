@@ -1,3 +1,4 @@
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -12,6 +13,15 @@ class Settings(BaseSettings):
 
     # ── Database ───────────────────────────────────────────────────────────────
     database_url: str = "postgresql+asyncpg://gridflow:gridflow@db:5432/gridflow"
+
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def normalise_database_url(cls, v: str) -> str:
+        """Accept postgres:// or postgresql:// and rewrite to postgresql+asyncpg://."""
+        for prefix in ("postgresql://", "postgres://"):
+            if v.startswith(prefix):
+                return "postgresql+asyncpg://" + v[len(prefix):]
+        return v
 
     # ── Redis / Celery ─────────────────────────────────────────────────────────
     redis_url: str = "redis://redis:6379/0"
