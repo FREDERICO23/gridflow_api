@@ -5,7 +5,7 @@
  *          or leave unset to use relative paths (frontend served by nginx that proxies /api/).
  */
 
-const BASE = `${import.meta.env.VITE_API_BASE_URL ?? ""}/api/v1`
+const BASE = `${import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ?? ""}/api/v1`
 
 // ── Error class ───────────────────────────────────────────────────────────────
 
