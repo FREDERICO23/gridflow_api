@@ -9,8 +9,8 @@ services:
       POSTGRES_USER: gridflow
       POSTGRES_PASSWORD: gridflow
       POSTGRES_DB: gridflow
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -23,8 +23,8 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    ports:
-      - "6379:6379"
+    expose:
+      - "6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -34,13 +34,12 @@ services:
   # ─── FastAPI application ────────────────────────────────────────────────────
   api:
     build: .
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     restart: unless-stopped
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     env_file: .env
     volumes:
-      - .:/app
       - ./credentials:/app/credentials:ro   # GCS service account JSON (optional)
     depends_on:
       db:
@@ -55,7 +54,6 @@ services:
     restart: unless-stopped
     env_file: .env
     volumes:
-      - .:/app
       - ./credentials:/app/credentials:ro
     depends_on:
       db:
@@ -69,8 +67,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     restart: unless-stopped
-    ports:
-      - "3000:80"
+    expose:
+      - "80"
     depends_on:
       - api
 
