@@ -27,9 +27,20 @@ class GCSClient:
             return self._client
 
         try:
-            from google.cloud import storage  # noqa: PLC0415
+            import json  # noqa: PLC0415
 
-            if settings.gcs_credentials_path:
+            from google.cloud import storage  # noqa: PLC0415
+            from google.oauth2 import service_account  # noqa: PLC0415
+
+            if settings.gcs_credentials_json:
+                info = json.loads(settings.gcs_credentials_json)
+                creds = service_account.Credentials.from_service_account_info(
+                    info,
+                    scopes=["https://www.googleapis.com/auth/cloud-platform"],
+                )
+                self._client = storage.Client(credentials=creds, project=info.get("project_id"))
+                logger.info("GCS client initialised from GCS_CREDENTIALS_JSON env var")
+            elif settings.gcs_credentials_path:
                 self._client = storage.Client.from_service_account_json(
                     settings.gcs_credentials_path
                 )

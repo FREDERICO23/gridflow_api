@@ -29,7 +29,8 @@ class Settings(BaseSettings):
     # ── Google Cloud Storage ───────────────────────────────────────────────────
     gcs_bucket_raw: str = "gridflow-raw-uploads"
     gcs_bucket_output: str = "gridflow-forecast-outputs"
-    gcs_credentials_path: str | None = None  # None → use ADC
+    gcs_credentials_path: str | None = None   # path to service-account JSON file
+    gcs_credentials_json: str | None = None   # raw JSON content (alternative to file)
 
     # ── Processing Defaults ────────────────────────────────────────────────────
     # Germany as primary market (Phase 1 confirmed)
