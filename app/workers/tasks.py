@@ -150,9 +150,13 @@ async def _bulk_insert_series(
 ) -> None:
     if df.empty:
         return
+    # TIMESTAMPTZ requires tz-aware datetimes; parsed data may still be tz-naive
+    ts_col = df["ts"]
+    if ts_col.dt.tz is None:
+        ts_col = ts_col.dt.tz_localize("UTC")
     rows = [
-        {"ts": row.ts, "job_id": job_id, "stage": stage, "value_kw": row.value_kw}
-        for row in df.itertuples(index=False)
+        {"ts": ts, "job_id": job_id, "stage": stage, "value_kw": row.value_kw}
+        for ts, row in zip(ts_col, df.itertuples(index=False))
     ]
     chunk_size = 1000
     for i in range(0, len(rows), chunk_size):
